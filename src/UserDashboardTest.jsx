@@ -43,7 +43,7 @@ export function UserDashboardTest()
         console.log(email) 
 
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
 
@@ -126,7 +126,7 @@ export function UserDashboardTest()
           <div className="card" style={{backgroundColor: '#F5F5F5',}}>
             <div className="card-body">
               <p></p>
-              <Link to="/UserOrganizeEvent" className="btn btn-primary btn-light"><h1 className="card-title">Organize event</h1></Link>
+              <Link to="/CheckVenues" className="btn btn-primary btn-light"><h1 className="card-title">Organize event</h1></Link>
               <p></p>
             </div>
           </div>

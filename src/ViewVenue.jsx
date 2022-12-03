@@ -46,7 +46,9 @@ export function ViewVenue()
         const classes = useStyles();
         const [product, setProduct] = useState([]);
         const [search, setSearch] = useState("");
-        const [filterParam, setFilterParam] = useState(["All"]);
+        const [filterParam, setFilterParam] = useState(["All venues"]);
+
+        const location_set = new Set();
 
         const getProductData = async () => {
           try {
@@ -87,7 +89,7 @@ export function ViewVenue()
         console.log(user); */
 
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
 
@@ -95,7 +97,7 @@ export function ViewVenue()
         <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div className="container-fluid">
-          <Link to="/UserDashboardTest" className="navbar-brand" >Event factory</Link>
+          <Link to={`/organiserDetails/${email}`} className="navbar-brand" >Event factory</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -106,9 +108,9 @@ export function ViewVenue()
                 <Link to="#" className="nav-link" aria-current="page" >Welcome {email}</Link>
               </li>
               <li></li>
-              {/* <li className="nav-item">
+              <li className="nav-item">
                 <Link to={`/Profile/${email}`}  className="nav-link active" >My Profile</Link>
-              </li> */}
+              </li> 
               <li className="nav-item">
                 <Link to='/profile' className="nav-link active" >Chat</Link>
               </li>
@@ -152,19 +154,27 @@ export function ViewVenue()
       </div>
 
       <div className="form-group required">
-      <select className="form-control"
+        <select className="form-control"
         type="text"
         placeholder="Filter"
         onChange={(e) => {
           setFilterParam(e.target.value);
-        }} >
-          <option className="form-control" value="All">All events</option>
-          <option className="form-control" value="Africa">Africa</option>
-          <option className="form-control" value="Americas">America</option>
-          <option className="form-control" value="Asia">Asia</option>
-          <option className="form-control" value="Europe">Europe</option>
-          <option className="form-control" value="Oceania">Oceania</option>
+        }}>
+          <option className="form-control" value="All venues">All venues</option>         
+          {product
+              .filter((item) => {
+                {
+                  return item;
+                }
+              }).map((item) => {
+                if (!location_set.has(item.location))
+                {
+                  location_set.add(item.location);
+                  return(<option className="form-control" value={item.location}>{item.location}</option>);
+                }
+                })}         
         </select>
+
       </div>
       
       <p></p>
@@ -194,20 +204,45 @@ export function ViewVenue()
               
               <StyledTableCell align="center">Location</StyledTableCell>
               <StyledTableCell align="center">Owner</StyledTableCell>
+              <StyledTableCell align="center">Booking fee</StyledTableCell>
+              <StyledTableCell align="center">Description</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {product
+          {product
               .filter((item) => {
-                if (search == "") {
+                if (filterParam == item.location)
+                {
+                  if (search == "") {
+                    return item;
+                  } else if (
+                    item.venueName.toLowerCase().includes(search.toLowerCase())                   
+                  ) {
+                    return item;
+                  } 
+                }
+                else if (filterParam == "All venues")
+                {
+                  if (search == "") {
+                    return item;
+                  } else if (
+                    item.venueName.toLowerCase().includes(search.toLowerCase())                   
+                  ) {
+                    return item;
+                  } 
+                }
+
+                /* if (search == "") {
                   return item;
                 } else if (
                   item.venueName.toLowerCase().includes(search.toLowerCase())                   
                 ) {
                   return item;
                 }
-              })
+              }) */
+
+            })
               .map((item) => {
                 return (
                   <StyledTableRow key={item.venueNumber} >
@@ -222,6 +257,12 @@ export function ViewVenue()
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {item.createdBy}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.bookingFee}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {item.description}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                     <button type="button" onClick={(e)=>handleClick(e,item.venueNumber)} class="btn btn-dark">Delete</button>
@@ -240,3 +281,5 @@ export function ViewVenue()
     
 }
 export default ViewVenue;
+
+

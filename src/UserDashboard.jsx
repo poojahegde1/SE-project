@@ -20,7 +20,7 @@ export function UserDashboard()
         console.log(user);
 
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
 
@@ -115,6 +115,8 @@ export function UserDashboard()
         </div>
       </div>
       </center>
+
+      
      
        
     </div>);

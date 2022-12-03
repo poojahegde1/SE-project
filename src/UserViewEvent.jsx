@@ -9,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import swal from "sweetalert";
 
 
 const StyledTableCell = withStyles((theme) => ({
@@ -38,21 +39,24 @@ const useStyles = makeStyles({
 export function UserViewEvent()
 { 
         
-        let {email} = useParams();
-        console.log(email) 
+        const [user, setUser] = useState(localStorage.getItem("email"));
 
         const classes = useStyles();
         const [product, setProduct] = useState([]);
         const [search, setSearch] = useState("");
-        const [filterParam, setFilterParam] = useState(["All"]);
+        const [filterParam, setFilterParam] = useState(["All events"]);
+
+        const [message, setMessage] = useState("");
+
+        const location_set = new Set();
 
         const getProductData = async () => {
           try {
             const data = await axios.get(
-              "http://makeup-api.herokuapp.com/api/v1/products.json?brand=maybelline"
+              `https://eventfactorybackend.herokuapp.com/getAllEvents?userEmail=${user}`
             );
-            console.log(data.data);
-            setProduct(data.data);
+            console.log(data.data.Events);
+            setProduct(data.data.Events);
           } catch (e) {
             console.log(e);
           }
@@ -63,19 +67,43 @@ export function UserViewEvent()
         }, []);
 
 
-        /* const user = localStorage.getItem("username"); 
-        console.log(user); */
-
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
+
+        let handleClick = async (e, eventNumber) => {
+          e.preventDefault();
+          try {
+              let res = await axios.put("https://eventfactorybackend.herokuapp.com/registerEvent", {
+                userEmail: user,
+                eventNumber: eventNumber,
+
+              });
+              if (res.status === 200) {
+                  swal("Success",  "Registered for event", {
+                      buttons: false,
+                      timer: 2000,
+                  }).then((value)=>{
+             
+              setMessage("Event registration successful");
+              console.log(message);
+              console.log(res);
+              window.location.reload(true);
+              }); 
+              }else {
+              swal("Registration Failed",  "Please try again");
+              }
+          } catch (err) {
+              console.log(err.response.data);
+          } 
+      }
 
         return (
         <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div className="container-fluid">
-          <Link to="/UserDashboardTest" className="navbar-brand" >Event factory</Link>
+          <Link to={`/userDetails/${user}`} className="navbar-brand" >Event factory</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -83,12 +111,12 @@ export function UserViewEvent()
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                
-                <Link to="#" className="nav-link" aria-current="page" >Welcome {email}</Link>
+                <Link to="#" className="nav-link" aria-current="page" >Welcome {user}</Link>
               </li>
               <li></li>
-              {/* <li className="nav-item">
-                <Link to={`/Profile/${email}`}  className="nav-link active" >My Profile</Link>
-              </li> */}
+              <li className="nav-item">
+                <Link to={`/Profile/${user}`}  className="nav-link active" >My Profile</Link>
+              </li>
               <li className="nav-item">
                 <Link to='/profile' className="nav-link active" >Chat</Link>
               </li>
@@ -118,12 +146,12 @@ export function UserViewEvent()
         </div>
       </nav>  
       
-      <p class="text-sm-center"><h1 class="text-center text-white dispaly-1">VENUE LIST</h1></p>  
+      <p class="text-sm-center"><h1 class="text-center text-white dispaly-1">EVENT LIST</h1></p>  
       <p/>
       <div className="form-group required">
       <input className="form-control"
         type="text"
-        placeholder="Search venues"
+        placeholder="Search events"
         onChange={(e) => {
           setSearch(e.target.value);
         }}
@@ -132,77 +160,109 @@ export function UserViewEvent()
       </div>
 
       <div className="form-group required">
-      <select className="form-control"
+        <select className="form-control"
         type="text"
         placeholder="Filter"
         onChange={(e) => {
           setFilterParam(e.target.value);
-        }} >
-          <option className="form-control" value="All">All events</option>
-          <option className="form-control" value="Africa">Africa</option>
-          <option className="form-control" value="Americas">America</option>
-          <option className="form-control" value="Asia">Asia</option>
-          <option className="form-control" value="Europe">Europe</option>
-          <option className="form-control" value="Oceania">Oceania</option>
+        }}>
+          <option className="form-control" value="All events">All events</option>         
+          {product
+              .filter((item) => {
+                {
+                  return item;
+                }
+              }).map((item) => {
+                if (!location_set.has(item.location))
+                {
+                  location_set.add(item.location);
+                  return(<option className="form-control" value={item.location}>{item.location}</option>);
+                }
+                })}         
         </select>
+
       </div>
       
       <p></p>
 
-      {/* {product
-        .filter((item) => {
-          if (search == "") {
-            return item;
-          } else if (item.name.toLowerCase().includes(search.toLowerCase())) {
-            return item;
-          }
-        })
-        .map((item) => {
-          return (
-            <p>
-              {item.name} - {item.price}
-            </p>
-          );
-        })} */}
+    
 
-      <TableContainer component={Paper}>
+<TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Product Name</StyledTableCell>
-              <StyledTableCell align="center">Product Name</StyledTableCell>
+              <StyledTableCell align="left">ID</StyledTableCell>
+              <StyledTableCell align="left">Event Name</StyledTableCell>
+              <StyledTableCell align="center">Location</StyledTableCell>
+              <StyledTableCell align="center">Organizer</StyledTableCell>
+              <StyledTableCell align="center">Date</StyledTableCell>
+              <StyledTableCell align="center">Starts at</StyledTableCell>
+              <StyledTableCell align="center">Ends at</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
+
+          
           <TableBody>
-            {product
+          {product
               .filter((item) => {
-                if (search == "") {
-                  return item;
-                } else if (
-                  item.name.toLowerCase().includes(search.toLowerCase())
-                ) {
-                  return item;
+                if (filterParam == item.location)
+                {
+                  if (search == "") {
+                    return item;
+                  } else if (
+                    item.eventName.toLowerCase().includes(search.toLowerCase())                   
+                  ) {
+                    return item;
+                  } 
                 }
-              })
+                else if (filterParam == "All events" )
+                {
+                  if (search == "") {
+                    return item;
+                  } else if (
+                    item.eventName.toLowerCase().includes(search.toLowerCase())                   
+                  ) {
+                    return item;
+                  } 
+                }
+
+            })
               .map((item) => {
                 return (
-                  <StyledTableRow key={item.id}>
+                  <StyledTableRow key={item.eventNumber} >
                     <StyledTableCell component="th" scope="row">
-                      {item.name}
+                      {item.eventNumber}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {item.eventName}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {item.price}
+                      {item.location}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.createdBy}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.eventDate}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.eventStartTime}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.eventEndTime}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                    <button type="button" class="btn btn-dark">Attend</button>
+                    <button type="button" class="btn btn-dark" onClick={(e)=>handleClick(e,item.eventNumber)}>Attend</button>
                     </StyledTableCell>
                   </StyledTableRow>
                 );
               })}
           </TableBody>
+
         </Table>
       </TableContainer>
+
 
 
       

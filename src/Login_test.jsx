@@ -37,13 +37,12 @@ function Login_test() {
             timer: 2000,
           })
           .then((value) => {
-            /* localStorage.setItem('message', JSON.stringify(response['message'])); */
+            
             console.log(response)
             localStorage.setItem('email', email);
             console.log(email);
             console.log(response.role);
-            /* navigate("/UserDashboard"); */
-           /*  navigate(`/userDetails/${email}`);  */
+          
             if(response['role']==="User") 
             {
               navigate(`/userDetails/${email}`);

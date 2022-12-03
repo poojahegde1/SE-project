@@ -5,52 +5,70 @@ import swal from "sweetalert";
 
 export function UserOrganizeEvent()
 { 
-        const [name, setName] = useState("");
-        const [description, setDescription] = useState("");
-        const [location, setLocation] = useState("");
-        const [time, setTime] = useState("");
-        const [price, setPrice] = useState("");
-        const [username, setUsername] = useState("");
-        const [message, setMessage] = useState("");
 
+        const [user, setUser] = useState(localStorage.getItem("email"));
+
+        const [eventName, seteventName] = useState("");
+        const [description, setDescription] = useState("");
+        const [eventEntryFee, seteventEntryFee] = useState("");
+        const [location, setlocation] = useState("");
+        const [maximumOccupancy, setmaximumOccupancy] = useState("");
+        /* const [createdBy, setcreatedBy] = useState(""); */
+        const [eventDate, seteventDate] = useState("");
+        const [eventStartTime, seteventStartTime] = useState("");
+        const [eventEndTime, seteventEndTime] = useState("");
+        const [venueNumber, setvenueNumber] = useState("");
+        const [graduationLevel, setgraduationLevel] = useState("");
+
+        
+
+        const [message, setMessage] = useState("");
     
         let handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let res = await axios.post("https://eventfactorybackend.herokuapp.com/register", {
-                name: name,
+            let res = await axios.post("https://eventfactorybackend.herokuapp.com/createEvent", {
+              eventName: eventName,
                 description: description,
+                eventEntryFee: eventEntryFee,
                 location: location,
-                time: time,
-                price: price,
-                username: username,
+                maximumOccupancy: maximumOccupancy,
+                createdBy: user,
+                eventDate: eventDate,
+                eventStartTime: eventStartTime,
+                eventEndTime: eventEndTime,
+                venueNumber: venueNumber,
+                graduationLevel: graduationLevel,
             });
             if (res.status === 200) {
-                swal("Success",  "User created", {
+                swal("Success",  "Event created", {
                     buttons: false,
                     timer: 2000,
                 }).then((value)=>{
-            setName("");
+            seteventName("");
             setDescription("");
-            setLocation("");
-            setTime("");
-            setPrice("");
-            setUsername("");
+            seteventEntryFee("");
+            setlocation("");
+            setmaximumOccupancy("");
+           /*  setcreatedBy(""); */
+            seteventDate("");
+            seteventStartTime("");
+            seteventEndTime("");
+            setvenueNumber("");
+            setgraduationLevel("");
             setMessage("Event created successfully");
-            window.location.href = "/OrgDashboard";
+            /* window.location.href = "/OrgDashboard"; */
             }); 
             }else {
             swal("Event creation Failed",  "Please try again");
             }
         } catch (err) {
-            console.log(err);
+            console.log(err.response.data);
         } 
     }
-        const user = localStorage.getItem("username"); 
-        console.log(user);
-
+        
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
 
@@ -58,7 +76,7 @@ export function UserOrganizeEvent()
         <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div className="container-fluid">
-          <Link to="/UserDashboardTest" className="navbar-brand" >Event factory</Link>
+          <Link to={`/userDetails/${user}`} className="navbar-brand" >Event factory</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -69,32 +87,16 @@ export function UserOrganizeEvent()
                 <Link to="#" className="nav-link" aria-current="page" >Welcome {user}</Link>
               </li>
               <li></li>
-              {/* <li className="nav-item">
-                <Link to='/profile' className="nav-link active" >My Profile</Link>
-              </li> */}
+              <li className="nav-item">
+                <Link to={`/Profile/${user}`} className="nav-link active" >My Profile</Link>
+              </li> 
               <li className="nav-item">
                 <Link to='/profile' className="nav-link active" >Chat</Link>
               </li>
               <li className="nav-item">
                 <Link to='/UserCalendar' className="nav-link active" >Calendar</Link>
               </li>
-              {/* <li className="nav-item">
-                <Link to='/profile' className="nav-link active" >Upload Venue</Link>
-              </li> */}
-              {/* <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">Action</a></li>
-                  <li><a className="dropdown-item" href="#">Another action</a></li>
-                  <li><hr className="dropdown-divider"/></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link disabled">Disabled</a>
-              </li> */}
+             
             </ul>
             <form className="d-flex" role="search">
               <button className="form-control me-2" type="submit" ><Link onClick={handleLogout}>Logout</Link></button>
@@ -112,31 +114,61 @@ export function UserOrganizeEvent()
                     <div class="col-md-5 mx-auto">
                         <div class="card card-body">
                                                     
-                            <form id="submitForm" /* onSubmit={handleSubmit} */  >
+                            <form id="submitForm" onSubmit={handleSubmit}   >
                             <input type="hidden" name="_csrf" value="7635eb83-1f95-4b32-8788-abec2724a9a4"/>
                                     <div class="form-group required">
                                     <label for="username">Event Name</label>
-                                    <input type="email"  class="form-control" id="username" required={true}  /* onChange={e => setName(e.target.value)} *//>
+                                    <input type="text"  class="form-control" id="username" required={true}   onChange={e => seteventName(e.target.value)} />
                                     </div>
                                     <p></p>
                                     <div class="form-group required">
                                     <label for="username">Description</label>
-                                    <textarea type="email"  class="form-control" id="username" required={true} /* onChange={e => setDescription(e.target.value)} *//>
+                                    <textarea type="text"  class="form-control" id="username" required={true}  onChange={e => setDescription(e.target.value)} />
                                     </div>
                                     <p></p>
                                     <div class="form-group required">
                                     <label for="username">Location</label>
-                                    <input type="email"  class="form-control" id="username" required={true}  /* onChange={e => setLocation(e.target.value)} *//>
+                                    <input type="text"  class="form-control" id="username" required={true}  onChange={e => setlocation(e.target.value)} />
                                     </div>
                                     <p></p>
                                     <div class="form-group required">
-                                    <label for="username">Time</label>
-                                    <input type = "datetime-local"  class="form-control" id="username" required={true}  /* onChange={e => setTime(e.target.value)} *//>
+                                    <label for="username">Entry fee</label>
+                                    <input type = "number"  class="form-control" id="username" required={true}   onChange={e => seteventEntryFee(e.target.value)} />
                                     </div>
                                     <p></p>
                                     <div class="form-group required">
-                                    <label for="username">Price</label>
-                                    <input type="email"  class="form-control" id="username" required={true}  /* onChange={e => setPrice(e.target.value)} *//>
+                                    <label for="username">Maximum occupancy</label>
+                                    <input type = "number"  class="form-control" id="username" required={true}   onChange={e => setmaximumOccupancy(e.target.value)} />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">Event created by</label>
+                                    <input type="email"  class="form-control" id="username" required={true}   readOnly={true} Value={user}  />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">Date</label>
+                                    <input type="date"  class="form-control" id="username" required={true}   onChange={e => seteventDate(e.target.value)} />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">Start time</label>
+                                    <input type="number"  class="form-control" id="username" required={true}   placeholder="24 hour format" onChange={e => seteventStartTime(e.target.value)} />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">End time</label>
+                                    <input type="number"  class="form-control" id="username" required={true}  placeholder="24 hour format" onChange={e => seteventEndTime(e.target.value)} />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">Venue number</label>
+                                    <input type="text"  class="form-control" id="username" required={true}   onChange={e => setvenueNumber(e.target.value)} />
+                                    </div>
+                                    <p></p>
+                                    <div class="form-group required">
+                                    <label for="username">Graduation level</label>
+                                    <input type="text"  class="form-control" id="username"   onChange={e => setgraduationLevel(e.target.value)} />
                                     </div>
                                     <p></p>
                                     

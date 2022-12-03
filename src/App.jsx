@@ -19,6 +19,7 @@ import UserViewEvent from "./UserViewEvent";
 import UserViewVenue from "./UserViewVenue";
 import UserEventsToAttend from "./UserEventsToAttend";
 import UserOrganizeEvent from "./UserOrganizeEvent";
+import CheckVenues from "./CheckVenues";
 
 
 export default class App extends Component
@@ -49,7 +50,8 @@ export default class App extends Component
             <Route path='/UserDashboardTest' exact element={<UserDashboardTest/>}/> 
             <Route path="/userDetails/:email"  element={<UserDashboardTest/>} /> 
             <Route path="/UserViewEvent"  element={<UserViewEvent/>}/>
-            <Route path="/UserOrganizeEvent"  element={<UserOrganizeEvent/>}/>
+            <Route path="/CheckVenues" element={<CheckVenues/>}/>
+            <Route path="/UserOrganizeEvent/:email"  element={<UserOrganizeEvent/>}/>
             <Route path="/UserViewVenue"  element={<UserViewVenue/>}/>
             <Route path="/UserEventsToAttend"  element={<UserEventsToAttend/>}/>
             <Route path='/UserCalendar'  element={<UserCalendar/>}/>

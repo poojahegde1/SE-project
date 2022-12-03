@@ -62,8 +62,9 @@ export function Profile()
               setFirstName("");
               setLastName("");
               setEducationLevel("");
-              setMessage("User details updated successfully");
+              setMessage("Updated profile details");
               window.location.href = `/userDetails/${email}`;
+              
             }); 
             }else {
               swal("Update Failed",  "Please try again");
@@ -133,7 +134,7 @@ export function Profile()
                                     <p></p>
                                     <div className="form-group required">
                                     <label for="username">Education level</label>
-                                    <input type="username"  className="form-control" id="username" required={true} contentEditable={true} suppressContentEditableWarning={true} onChange={e => setEducationLevel(e.target.value)} Value={educationLevel}></input>
+                                    <input type="username"  className="form-control" id="username" required={false} contentEditable={true} suppressContentEditableWarning={true} onChange={e => setEducationLevel(e.target.value)} Value={educationLevel}></input>
                                     </div>
                                     <p></p>  
                                     

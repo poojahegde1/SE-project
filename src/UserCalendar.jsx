@@ -98,11 +98,10 @@ function UserCalendar ()
             );
     }, []);
 
-    const user = localStorage.getItem("username"); 
-        console.log(user);
+        const [user, setUser] = useState(localStorage.getItem("email"));
 
         const handleLogout = () => {
-          localStorage.removeItem("user"); 
+          localStorage.removeItem("email"); 
           window.location.href = "/";
         };
 
