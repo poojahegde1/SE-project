@@ -200,8 +200,7 @@ export function ViewVenue()
           <TableHead>
             <TableRow>
             <StyledTableCell align="left">ID</StyledTableCell>
-              <StyledTableCell align="left">Venue Name</StyledTableCell>
-              
+              <StyledTableCell align="left">Venue Name</StyledTableCell>        
               <StyledTableCell align="center">Location</StyledTableCell>
               <StyledTableCell align="center">Owner</StyledTableCell>
               <StyledTableCell align="center">Booking fee</StyledTableCell>

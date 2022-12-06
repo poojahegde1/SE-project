@@ -34,9 +34,9 @@ export function OrgDashboard()
               <li className="nav-item">
                 <Link to='/profile' className="nav-link active" >Chat</Link>
               </li>
-              <li className="nav-item">
+             {/*  <li className="nav-item">
                 <Link to='/UserCalendar' className="nav-link active" >Calendar</Link>
-              </li>
+              </li> */}
               {/* <li className="nav-item">
                 <Link to='/profile' className="nav-link active" >Upload Venue</Link>
               </li> */}

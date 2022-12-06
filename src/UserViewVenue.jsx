@@ -184,6 +184,8 @@ export function UserViewVenue()
               <StyledTableCell align="left">Venue Name</StyledTableCell>
               <StyledTableCell align="center">Location</StyledTableCell>
               <StyledTableCell align="center">Owner</StyledTableCell>
+              <StyledTableCell align="center">Booking fee</StyledTableCell>
+              <StyledTableCell align="center">Description</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
@@ -237,6 +239,12 @@ export function UserViewVenue()
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {item.createdBy}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.bookingFee}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {item.description}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                     <button type="button" class="btn btn-dark">Book</button>

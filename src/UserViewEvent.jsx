@@ -11,7 +11,6 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import swal from "sweetalert";
 
-
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
@@ -36,43 +35,40 @@ const useStyles = makeStyles({
   },
 });
 
-export function UserViewEvent()
-{ 
-        
-        const [user, setUser] = useState(localStorage.getItem("email"));
+export function UserViewEvent() {
+  const [user, setUser] = useState(localStorage.getItem("email"));
 
-        const classes = useStyles();
-        const [product, setProduct] = useState([]);
-        const [search, setSearch] = useState("");
-        const [filterParam, setFilterParam] = useState(["All events"]);
+  const classes = useStyles();
+  const [product, setProduct] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filterParam, setFilterParam] = useState(["All events"]);
 
-        const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
 
-        const location_set = new Set();
+  const location_set = new Set();
 
-        const getProductData = async () => {
-          try {
-            const data = await axios.get(
-              `https://eventfactorybackend.herokuapp.com/getAllEvents?userEmail=${user}`
-            );
-            console.log(data.data.Events);
-            setProduct(data.data.Events);
-          } catch (e) {
-            console.log(e);
-          }
-        };
+  const getProductData = async () => {
+    try {
+      const data = await axios.get(
+        `https://eventfactorybackend.herokuapp.com/getAllEvents?userEmail=${user}`
+      );
+      console.log(data.data.Events);
+      setProduct(data.data.Events);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-        useEffect(() => {
-          getProductData();
-        }, []);
+  useEffect(() => {
+    getProductData();
+  }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("email");
+    window.location.href = "/";
+  };
 
-        const handleLogout = () => {
-          localStorage.removeItem("email"); 
-          window.location.href = "/";
-        };
-
-        let handleClick = async (e, eventNumber) => {
+  /* let handleClick = async (e, eventNumber) => {
           e.preventDefault();
           try {
               let res = await axios.put("https://eventfactorybackend.herokuapp.com/registerEvent", {
@@ -97,33 +93,112 @@ export function UserViewEvent()
           } catch (err) {
               console.log(err.response.data);
           } 
-      }
+      } */
 
-        return (
-        <div>
+  let handleClick = async (e, eventNumber) => {
+    e.preventDefault();
+    try {
+      let res = await axios.put(
+        "https://eventfactorybackend.herokuapp.com/registerEvent",
+        {
+          userEmail: user,
+          eventNumber: eventNumber,
+        }
+      );
+      console.log(res.data);
+      if (res.data.statusCode === 200 && res.data.message === "Waitlisted") {
+        swal("Added to waitlist", "Registered for event", {
+          buttons: false,
+          timer: 2000,
+        }).then((value) => {
+          setMessage("Added to waitlist");
+          console.log(message);
+          console.log(res);
+          window.location.reload(true);
+        });
+      } else if (
+        res.data.statusCode === 200 &&
+        res.data.message != "Waitlisted"
+      ) {
+        swal("Success", "Registered for event", {
+          buttons: false,
+          timer: 2000,
+        }).then((value) => {
+          setMessage("Event registration successful");
+          console.log(message);
+          console.log(res);
+          window.location.reload(true);
+        });
+      } else if (res.data.statusCode === 201) {
+        swal("Waitlisted", "Waitlisted", {
+          buttons: false,
+          timer: 2000,
+        }).then((value) => {
+          setMessage("Waitlisted");
+          console.log(message);
+          console.log(res);
+          window.location.reload(true);
+        });
+      } else if (res.data.statusCode === 202) {
+        swal("Waitlist full", "Waitlist full", {
+          buttons: false,
+          timer: 2000,
+        }).then((value) => {
+          setMessage("Waitlist full");
+          console.log(message);
+          console.log(res);
+          window.location.reload(true);
+        });
+      } else {
+        swal("Registration Failed", "Please try again");
+      }
+    } catch (err) {
+      console.log(err.response.data);
+    }
+  };
+
+  return (
+    <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div className="container-fluid">
-          <Link to={`/userDetails/${user}`} className="navbar-brand" >Event factory</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <Link to={`/userDetails/${user}`} className="navbar-brand">
+            Event factory
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-               
-                <Link to="#" className="nav-link" aria-current="page" >Welcome {user}</Link>
+                <Link to="#" className="nav-link" aria-current="page">
+                  Welcome {user}
+                </Link>
               </li>
               <li></li>
               <li className="nav-item">
-                <Link to={`/Profile/${user}`}  className="nav-link active" >My Profile</Link>
+                <Link to={`/Profile/${user}`} className="nav-link active">
+                  My Profile
+                </Link>
               </li>
               <li className="nav-item">
-                <Link to='/profile' className="nav-link active" >Chat</Link>
+                <Link to="/profile" className="nav-link active">
+                  Chat
+                </Link>
               </li>
               <li className="nav-item">
-                <Link to='/UserCalendar' className="nav-link active" >Calendar</Link>
+                <Link to="/UserCalendar" className="nav-link active">
+                  Calendar
+                </Link>
               </li>
-            
+
               {/* <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Dropdown
@@ -140,102 +215,115 @@ export function UserViewEvent()
               </li> */}
             </ul>
             <form className="d-flex" role="search">
-              <button className="form-control me-2" type="submit" ><Link onClick={handleLogout}>Logout</Link></button>
-            </form>            
+              <button className="form-control me-2" type="submit">
+                <Link onClick={handleLogout}>Logout</Link>
+              </button>
+            </form>
           </div>
         </div>
-      </nav>  
-      
-      <p class="text-sm-center"><h1 class="text-center text-white dispaly-1">EVENT LIST</h1></p>  
-      <p/>
+      </nav>
+
+      <p class="text-sm-center">
+        <h1 class="text-center text-white dispaly-1">EVENT LIST</h1>
+      </p>
+      <p />
       <div className="form-group required">
-      <input className="form-control"
-        type="text"
-        placeholder="Search events"
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-      />
-      <p></p>
+        <input
+          className="form-control"
+          type="text"
+          placeholder="Search events"
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+        />
+        <p></p>
       </div>
 
       <div className="form-group required">
-        <select className="form-control"
-        type="text"
-        placeholder="Filter"
-        onChange={(e) => {
-          setFilterParam(e.target.value);
-        }}>
-          <option className="form-control" value="All events">All events</option>         
+        <select
+          className="form-control"
+          type="text"
+          placeholder="Filter"
+          onChange={(e) => {
+            setFilterParam(e.target.value);
+          }}
+        >
+          <option className="form-control" value="All events">
+            All events
+          </option>
           {product
-              .filter((item) => {
-                {
-                  return item;
-                }
-              }).map((item) => {
-                if (!location_set.has(item.location))
-                {
-                  location_set.add(item.location);
-                  return(<option className="form-control" value={item.location}>{item.location}</option>);
-                }
-                })}         
+            .filter((item) => {
+              {
+                return item;
+              }
+            })
+            .map((item) => {
+              if (!location_set.has(item.location)) {
+                location_set.add(item.location);
+                return (
+                  <option className="form-control" value={item.location}>
+                    {item.location}
+                  </option>
+                );
+              }
+            })}
         </select>
-
       </div>
-      
+
       <p></p>
 
-    
-
-<TableContainer component={Paper}>
+      <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell align="left">ID</StyledTableCell>
               <StyledTableCell align="left">Event Name</StyledTableCell>
+              <StyledTableCell align="left">Description</StyledTableCell>
               <StyledTableCell align="center">Location</StyledTableCell>
               <StyledTableCell align="center">Organizer</StyledTableCell>
               <StyledTableCell align="center">Date</StyledTableCell>
               <StyledTableCell align="center">Starts at</StyledTableCell>
               <StyledTableCell align="center">Ends at</StyledTableCell>
+              <StyledTableCell align="left">
+                Currently attending
+              </StyledTableCell>
+              <StyledTableCell align="left">Max attenders</StyledTableCell>
               <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
 
-          
           <TableBody>
-          {product
+            {product
               .filter((item) => {
-                if (filterParam == item.location)
-                {
+                if (filterParam == item.location) {
                   if (search == "") {
                     return item;
                   } else if (
-                    item.eventName.toLowerCase().includes(search.toLowerCase())                   
+                    item.eventName.toLowerCase().includes(search.toLowerCase())
                   ) {
                     return item;
-                  } 
-                }
-                else if (filterParam == "All events" )
-                {
+                  }
+                } else if (filterParam == "All events") {
                   if (search == "") {
                     return item;
                   } else if (
-                    item.eventName.toLowerCase().includes(search.toLowerCase())                   
+                    item.eventName.toLowerCase().includes(search.toLowerCase())
                   ) {
                     return item;
-                  } 
+                  }
                 }
-
-            })
+              })
               .map((item) => {
                 return (
-                  <StyledTableRow key={item.eventNumber} >
+                  <StyledTableRow key={item.eventNumber}>
                     <StyledTableCell component="th" scope="row">
                       {item.eventNumber}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {item.eventName}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {item.description}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {item.location}
@@ -252,22 +340,28 @@ export function UserViewEvent()
                     <StyledTableCell align="center">
                       {item.eventEndTime}
                     </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.numberAttending}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {item.maximumOccupancy}
+                    </StyledTableCell>
                     <StyledTableCell align="right">
-                    <button type="button" class="btn btn-dark" onClick={(e)=>handleClick(e,item.eventNumber)}>Attend</button>
+                      <button
+                        type="button"
+                        class="btn btn-dark"
+                        onClick={(e) => handleClick(e, item.eventNumber)}
+                      >
+                        Attend
+                      </button>
                     </StyledTableCell>
                   </StyledTableRow>
                 );
               })}
           </TableBody>
-
         </Table>
       </TableContainer>
-
-
-
-      
-
-    </div>);
-    
+    </div>
+  );
 }
 export default UserViewEvent;

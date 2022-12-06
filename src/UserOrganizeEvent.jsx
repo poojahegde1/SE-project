@@ -64,6 +64,7 @@ export function UserOrganizeEvent()
             }
         } catch (err) {
             console.log(err.response.data);
+            swal("Event creation Failed",  "Please try again");
         } 
     }
         

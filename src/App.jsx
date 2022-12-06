@@ -20,6 +20,7 @@ import UserViewVenue from "./UserViewVenue";
 import UserEventsToAttend from "./UserEventsToAttend";
 import UserOrganizeEvent from "./UserOrganizeEvent";
 import CheckVenues from "./CheckVenues";
+import Chat from "./Chat";
 
 
 export default class App extends Component
@@ -41,6 +42,7 @@ export default class App extends Component
            {/*  <Route path="/Profile" exact element={<Profile/>}/> */}
             <Route path="/Profile/:email"  element={<Profile/>}/>
             <Route path="/PasswordReset"  element={<ForgotPwd/>}/>
+            <Route path="/Chat" element={<Chat/>}/>
 
             {/* <Route path='/OrgDashboard'  element={<OrgDashboard/>}/> */}
             <Route path='/organiserDetails/:email'  element={<OrgDashboard/>}/>

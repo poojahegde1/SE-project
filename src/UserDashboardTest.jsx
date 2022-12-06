@@ -65,7 +65,7 @@ export function UserDashboardTest()
                 <Link to={`/Profile/${email}`}  className="nav-link active" >My Profile</Link>
               </li>
               <li className="nav-item">
-                <Link to='/profile' className="nav-link active" >Chat</Link>
+                <Link to='/Chat' className="nav-link active" >Chat</Link>
               </li>
               <li className="nav-item">
                 <Link to='/UserCalendar' className="nav-link active" >Calendar</Link>

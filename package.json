@@ -47,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@tawk.to/tawk-messenger-react": "^2.0.1"
   }
 }

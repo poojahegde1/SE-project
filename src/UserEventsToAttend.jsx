@@ -9,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import swal from "sweetalert";
 
 
 const StyledTableCell = withStyles((theme) => ({
@@ -61,6 +62,28 @@ export function UserEventsToAttend()
         useEffect(() => {
           getProductData();
         }, []);
+
+
+        let handleClick = async (e, eventNumber) => {
+          e.preventDefault();
+          try {
+              let res = await axios.post(`https://eventfactorybackend.herokuapp.com/unregisterEvent`, {
+                userEmail : user,
+                eventNumber : eventNumber,
+              });
+              if (res.status === 200) {
+                  swal("Unregistered",  "Unregistered", {
+                      buttons: false,
+                      timer: 2000,
+                  })
+                  window.location.reload(true);
+              }else {
+              swal("Venue deletion Failed",  "Please try again");
+              }
+          } catch (err) {
+              console.log(err);
+          } 
+      }
 
 
         const handleLogout = () => {
@@ -181,7 +204,7 @@ export function UserEventsToAttend()
               <StyledTableCell align="center">Date</StyledTableCell>
               <StyledTableCell align="center">Starts at</StyledTableCell>
               <StyledTableCell align="center">Ends at</StyledTableCell>
-              
+              <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
           </TableHead>
 
@@ -235,9 +258,9 @@ export function UserEventsToAttend()
                     <StyledTableCell align="center">
                       {item.eventEndTime}
                     </StyledTableCell>
-                    {/* <StyledTableCell align="right">
-                    <button type="button" class="btn btn-dark" >Attend</button>
-                    </StyledTableCell> */}
+                    <StyledTableCell align="right">
+                    <button type="button" class="btn btn-dark" onClick={(e)=>handleClick(e,item.eventNumber)}>Unregister</button>
+                    </StyledTableCell>
                   </StyledTableRow>
                 );
               })}
