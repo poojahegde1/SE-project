@@ -11,7 +11,6 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import swal from "sweetalert";
 
-
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.black,
@@ -36,88 +35,102 @@ const useStyles = makeStyles({
   },
 });
 
-export function ViewVenue()
-{ 
-        
-        let {email} = useParams();
-      
-        console.log(email) 
+export function ViewVenue() {
+  let { email } = useParams();
 
-        const classes = useStyles();
-        const [product, setProduct] = useState([]);
-        const [search, setSearch] = useState("");
-        const [filterParam, setFilterParam] = useState(["All venues"]);
+  console.log(email);
 
-        const location_set = new Set();
+  const classes = useStyles();
+  const [product, setProduct] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filterParam, setFilterParam] = useState(["All venues"]);
 
-        const getProductData = async () => {
-          try {
-            const data = await axios.get(
-              `https://eventfactorybackend.herokuapp.com/venueOwnerVenues/${email}`
-            );
-            console.log(data.data.Venues);
-            setProduct(data.data.Venues);
-          } catch (e) {
-            console.log(e);
-          }
-        };
+  const location_set = new Set();
 
-        useEffect(() => {
-          getProductData();
-        }, []);
+  const getProductData = async () => {
+    try {
+      const data = await axios.get(
+        `https://eventfactorybackend.herokuapp.com/venueOwnerVenues/${email}`
+      );
+      console.log(data.data.Venues);
+      setProduct(data.data.Venues);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
+  useEffect(() => {
+    getProductData();
+  }, []);
 
-        let handleClick = async (e, venueNumber) => {
-          e.preventDefault();
-          try {
-              let res = await axios.delete(`https://eventfactorybackend.herokuapp.com/removeVenues/${venueNumber}`);
-              if (res.status === 200) {
-                  swal("Success",  "Venue deleted", {
-                      buttons: false,
-                      timer: 2000,
-                  })
-              }else {
-              swal("Venue deletion Failed",  "Please try again");
-              }
-          } catch (err) {
-              console.log(err);
-          } 
+  let handleClick = async (e, venueNumber) => {
+    e.preventDefault();
+    try {
+      let res = await axios.delete(
+        `https://eventfactorybackend.herokuapp.com/removeVenues/${venueNumber}`
+      );
+      if (res.status === 200) {
+        swal("Success", "Venue deleted", {
+          buttons: false,
+          timer: 2000,
+        });
+      } else {
+        swal("Venue deletion Failed", "Please try again");
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-
-        /* const user = localStorage.getItem("username"); 
+  /* const user = localStorage.getItem("username"); 
         console.log(user); */
 
-        const handleLogout = () => {
-          localStorage.removeItem("email"); 
-          window.location.href = "/";
-        };
+  const handleLogout = () => {
+    localStorage.removeItem("email");
+    window.location.href = "/";
+  };
 
-        return (
-        <div>
+  return (
+    <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div className="container-fluid">
-          <Link to={`/organiserDetails/${email}`} className="navbar-brand" >Event factory</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <Link to={`/organiserDetails/${email}`} className="navbar-brand">
+            Event factory
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 {/* <Link to="#" className="nav-link" aria-current="page" >Welcome {user.fname} {user.lname}</Link> */}
-                <Link to="#" className="nav-link" aria-current="page" >Welcome {email}</Link>
+                <Link to="#" className="nav-link" aria-current="page">
+                  Welcome {email}
+                </Link>
               </li>
               <li></li>
               <li className="nav-item">
-                <Link to={`/Profile/${email}`}  className="nav-link active" >My Profile</Link>
-              </li> 
-              <li className="nav-item">
-                <Link to='/profile' className="nav-link active" >Chat</Link>
+                <Link to={`/Profile/${email}`} className="nav-link active">
+                  My Profile
+                </Link>
               </li>
               <li className="nav-item">
+                <Link to="/profile" className="nav-link active">
+                  Chat
+                </Link>
+              </li>
+              {/*  <li className="nav-item">
                 <Link to='/UserCalendar' className="nav-link active" >Calendar</Link>
-              </li>
-            
+              </li> */}
+
               {/* <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Dropdown
@@ -134,49 +147,61 @@ export function ViewVenue()
               </li> */}
             </ul>
             <form className="d-flex" role="search">
-              <button className="form-control me-2" type="submit" ><Link onClick={handleLogout}>Logout</Link></button>
-            </form>            
+              <button className="form-control me-2" type="submit">
+                <Link onClick={handleLogout}>Logout</Link>
+              </button>
+            </form>
           </div>
         </div>
-      </nav>  
-      
-      <p class="text-sm-center"><h1 class="text-center text-white dispaly-1">VENUE LIST</h1></p>  
-      <p/>
+      </nav>
+
+      <p class="text-sm-center">
+        <h1 class="text-center text-white dispaly-1">VENUE LIST</h1>
+      </p>
+      <p />
       <div className="form-group required">
-      <input className="form-control"
-        type="text"
-        placeholder="Search venues"
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-      />
-      <p></p>
+        <input
+          className="form-control"
+          type="text"
+          placeholder="Search venues"
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+        />
+        <p></p>
       </div>
 
       <div className="form-group required">
-        <select className="form-control"
-        type="text"
-        placeholder="Filter"
-        onChange={(e) => {
-          setFilterParam(e.target.value);
-        }}>
-          <option className="form-control" value="All venues">All venues</option>         
+        <select
+          className="form-control"
+          type="text"
+          placeholder="Filter"
+          onChange={(e) => {
+            setFilterParam(e.target.value);
+          }}
+        >
+          <option className="form-control" value="All venues">
+            All venues
+          </option>
           {product
-              .filter((item) => {
-                {
-                  return item;
-                }
-              }).map((item) => {
-                if (!location_set.has(item.location))
-                {
-                  location_set.add(item.location);
-                  return(<option className="form-control" value={item.location}>{item.location}</option>);
-                }
-                })}         
+            .filter((item) => {
+              {
+                return item;
+              }
+            })
+            .map((item) => {
+              if (!location_set.has(item.location)) {
+                location_set.add(item.location);
+                return (
+                  <option className="form-control" value={item.location}>
+                    {item.location}
+                  </option>
+                );
+              }
+            })}
         </select>
-
       </div>
-      
+
       <p></p>
 
       {/* {product
@@ -199,8 +224,8 @@ export function ViewVenue()
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
-            <StyledTableCell align="left">ID</StyledTableCell>
-              <StyledTableCell align="left">Venue Name</StyledTableCell>        
+              <StyledTableCell align="left">ID</StyledTableCell>
+              <StyledTableCell align="left">Venue Name</StyledTableCell>
               <StyledTableCell align="center">Location</StyledTableCell>
               <StyledTableCell align="center">Owner</StyledTableCell>
               <StyledTableCell align="center">Booking fee</StyledTableCell>
@@ -209,27 +234,24 @@ export function ViewVenue()
             </TableRow>
           </TableHead>
           <TableBody>
-          {product
+            {product
               .filter((item) => {
-                if (filterParam == item.location)
-                {
+                if (filterParam == item.location) {
                   if (search == "") {
                     return item;
                   } else if (
-                    item.venueName.toLowerCase().includes(search.toLowerCase())                   
+                    item.venueName.toLowerCase().includes(search.toLowerCase())
                   ) {
                     return item;
-                  } 
-                }
-                else if (filterParam == "All venues")
-                {
+                  }
+                } else if (filterParam == "All venues") {
                   if (search == "") {
                     return item;
                   } else if (
-                    item.venueName.toLowerCase().includes(search.toLowerCase())                   
+                    item.venueName.toLowerCase().includes(search.toLowerCase())
                   ) {
                     return item;
-                  } 
+                  }
                 }
 
                 /* if (search == "") {
@@ -240,11 +262,10 @@ export function ViewVenue()
                   return item;
                 }
               }) */
-
-            })
+              })
               .map((item) => {
                 return (
-                  <StyledTableRow key={item.venueNumber} >
+                  <StyledTableRow key={item.venueNumber}>
                     <StyledTableCell component="th" scope="row">
                       {item.venueNumber}
                     </StyledTableCell>
@@ -264,7 +285,13 @@ export function ViewVenue()
                       {item.description}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                    <button type="button" onClick={(e)=>handleClick(e,item.venueNumber)} class="btn btn-dark">Delete</button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleClick(e, item.venueNumber)}
+                        class="btn btn-dark"
+                      >
+                        Delete
+                      </button>
                     </StyledTableCell>
                   </StyledTableRow>
                 );
@@ -272,13 +299,7 @@ export function ViewVenue()
           </TableBody>
         </Table>
       </TableContainer>
-
-
-      
-
-    </div>);
-    
+    </div>
+  );
 }
 export default ViewVenue;
-
-
